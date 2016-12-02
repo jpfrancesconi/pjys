@@ -1,0 +1,3 @@
+name = Reservas
+description = Permite gestionar las reservas hechas por los usuarios registrados de la plataforma
+core = 7.x

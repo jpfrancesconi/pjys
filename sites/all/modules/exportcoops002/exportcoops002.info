@@ -1,0 +1,8 @@
+name = exportcoops002
+description = idiomas
+core = 7.x
+package = Features
+features[features_api][] = api:2
+features[language][] = es
+features_exclude[dependencies][features] = features
+features_exclude[dependencies][locale] = locale

@@ -1,0 +1,156 @@
+#preface-area
+{
+    padding: 0;
+}
+.preface-block.col-sm-12 {
+    height: 60px;
+    padding: 0;
+}
+
+div#block-system-user-menu h2
+{
+    display: none;
+}
+
+#preface-area ul {
+    height: 100%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #ED564B;
+}
+
+#preface-area li {
+    list-style: none;
+    padding-top: 5px;
+    float: left;
+    height: 100%;
+}
+
+#preface-area li a,
+#preface-area .nolink {
+    height: 100%;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Change the link color to #111 (black) on hover */
+#preface-area li a:hover {
+    background-color: #F96B61;
+}
+
+div#block-system-user-menu {
+    height: 60px;
+}
+
+div#block-system-user-menu .content {
+    height: 100%;
+}
+
+#preface-area li.last.leaf
+{
+    float: right;
+    background-color: #2C87C4;
+}
+
+.page-user-login div#primary {
+    margin: 0 auto;
+}
+
+.page-user-login .region.region-content {
+    width: none;
+}
+
+.form-item.form-type-textfield.form-item-name, .form-item.form-type-password.form-item-pass {
+    height: 80px;
+    margin-bottom: 20px;
+}
+.page-user-login .region.region-content {
+    width: none;
+}
+.page-user-login input#edit-name,.page-user-login input#edit-pass {
+    width: 100%;
+    height: 50px;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    border-bottom-color: #ea8383;
+    background-color: #e2e3e7;
+    color: #666666;
+    font-size: 1.3em;
+}
+
+.page-user-login .region.region-content {
+    width: none;
+}
+
+/*CONTACT form*/
+form#webform-client-form-4 input.form-text, 
+form#webform-client-form-4 textarea.form-textarea, 
+form#webform-client-form-4 select.form-select {
+    border: 4px solid #EA8383;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.38);
+}
+
+/*SITE FOOTER*/
+.site-footer{
+    position: relative;
+    bottom: 0;
+    height: 150px;
+}
+
+/*FRONT*/
+div#logo {
+    display: none;
+}
+
+#main-menu {
+    float: right;
+}
+#main-menu li {
+    border: solid 4px transparent;
+}
+@media (min-width: 768px){
+    .col-sm-6 {
+        width: 100%;
+    }
+}
+
+h1.page-title {
+    font-family: 'Raleway', sans-serif;
+    text-shadow: 2px 2px 1px rgba(150, 150, 150, 1);
+}
+
+/*MOBILE MENU*/
+.responsive-menus.responsified span.toggler {
+    background: #EC8C86;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    width: 100%;
+    padding: 0;
+    height: 40px;
+    padding-top: 5px;
+}
+
+.col-sm-6.mainmenu {
+    padding: 0;
+}
+
+div#rm-removed {
+    background: #EC8C86;
+    box-shadow: none;
+}
+
+/*FOOTER*/
+.fcred a:link, .fcred a:visited {
+color: #f0ad4e;
+}

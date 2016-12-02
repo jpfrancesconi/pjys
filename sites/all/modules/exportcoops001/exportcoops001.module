@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the exportCoops001 feature.
+ */
+
+include_once 'exportcoops001.features.inc';
