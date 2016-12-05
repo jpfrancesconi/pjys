@@ -233,8 +233,11 @@
   <footer id="colophon" class="site-footer" role="contentinfo">
     <div class="container">
       <div class="row">
-        <div class="fcred col-sm-12">
+        <div class="fcred col-sm-12" style="float: left; width: 50%;">
           <?php print t('Copyright'); ?> &copy; <?php echo date("Y"); ?>, <a href="<?php print $front_page; ?>"><?php print $site_name; ?></a>. <?php print t('Desarrollado por '); ?>  <a href="http://www.ideasorange.com" target="_blank">ideasOrange Sistemas</a>.
+        </div>
+        <div class="fcred col-sm-13" style="text-align: -webkit-right;">
+          <img src="<?php print base_path() . drupal_get_path('theme', 'nexus') . '/images/logofooter400.png'; ?>"/>
         </div>
       </div>
     </div>

@@ -67,8 +67,8 @@ div#block-system-user-menu .content {
 }
 
 .form-item.form-type-textfield.form-item-name, .form-item.form-type-password.form-item-pass {
-    height: 80px;
-    margin-bottom: 20px;
+    /*height: 80px;
+    margin-bottom: 20px;*/
 }
 .page-user-login .region.region-content {
     width: none;
@@ -148,6 +148,31 @@ h1.page-title {
 div#rm-removed {
     background: #EC8C86;
     box-shadow: none;
+}
+
+/*FRONT BLOQUES*/
+
+div#block-user-login {
+    width: 30%;
+    float: right; 
+    text-align: center;
+}
+div#block-user-login .content{
+    background-color: white; 
+}
+
+div#block-user-login .form-item label{
+    display: none;
+}
+div#block-user-login .form-item input[type="text"],
+div#block-user-login .form-item input[type="password"] 
+{
+    border-left: solid 4px red;
+    margin-left: 10px;
+}
+
+div#block-block-4 {
+    clear: both; 
 }
 
 /*FOOTER*/
