@@ -192,8 +192,7 @@ function reservas_cancelar_volver_submit($form, &$form_state) {
 	$uid = $form_state['values']['details']['uid'];
 	
 	//redireccionamos a mis_reservas 
-	//$form_state['redirect'] = array('mis_reservas/'.$nid.'/'.$uid);
-  $form_state['redirect'] = array('mis-reservas');
+	$form_state['redirect'] = array('mis-reservas');
 	
 
   //$form['#node']->webform['components']['9']['value'] = "RESERVA CANCELADA";
