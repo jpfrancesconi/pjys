@@ -107,7 +107,11 @@ form#webform-client-form-4 select.form-select {
     height: 150px;
 }
 
+
+
 /*FRONT*/
+
+
 div#logo {
     display: none;
 }
@@ -118,11 +122,7 @@ div#logo {
 #main-menu li {
     border: solid 4px transparent;
 }
-@media (min-width: 768px){
-    .col-sm-6 {
-        width: 100%;
-    }
-}
+
 
 h1.page-title {
     font-family: 'Raleway', sans-serif;
@@ -130,8 +130,9 @@ h1.page-title {
 }
 
 /*MOBILE MENU*/
+
 .responsive-menus.responsified span.toggler {
-    background: #EC8C86;
+    background: #ed3237;
     border: none;
     border-radius: 0;
     box-shadow: none;
@@ -151,14 +152,22 @@ div#rm-removed {
 }
 
 /*FRONT BLOQUES*/
-
+/*  LOGIN   */
 div#block-user-login {
     width: 30%;
     float: right; 
     text-align: center;
+    padding: 15px;
+    background-color: #efefef;
+    margin-bottom: 10px;
 }
-div#block-user-login .content{
-    background-color: white; 
+
+div#titulo-login-block {
+    font-size: 1.5em;
+    text-align: center; 
+    margin-bottom: 5px;
+    width: 80%;
+    margin: 0 auto;
 }
 
 div#block-user-login .form-item label{
@@ -169,7 +178,35 @@ div#block-user-login .form-item input[type="password"]
 {
     border-left: solid 4px red;
     margin-left: 10px;
+    width: 80%;
+    font-size: 1.1em;
 }
+
+div#block-user-login .item-list ul li {
+    text-align: right;
+    padding-right: 10%;
+}
+
+div#edit-actions {
+    text-align: right;
+    padding-right: 5%; 
+}
+
+div#edit-actions input#edit-submit {
+    font-size: 1.2em;
+    background-color: #ed3237;    
+    border: solid 3px #ed3237;
+    transition: all 0.4s;
+}
+
+div#edit-actions input#edit-submit:hover {
+    border-radius: 0px;
+    box-shadow: none;
+    background-color: #e2e3e7;
+    color: #ed3237;
+}
+
+/*  FIN CSS LOGIN   */
 
 div#block-block-4 {
     clear: both; 
@@ -178,4 +215,91 @@ div#block-block-4 {
 /*FOOTER*/
 .fcred a:link, .fcred a:visited {
 color: #f0ad4e;
+}
+
+.col-sm-13 img {    
+    max-height: 120px;
+}
+
+/*REDES SOCIALES*/
+.os-share-widget-interface a.more.share-provider {
+    display: none;
+}
+
+/*CANASTAS - RESERVAS*/
+.bloque-canastas-disponibles div.views-field-nothing {
+    background: transparent;
+    border: solid 2px #ed3237;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+.bloque-canastas-disponibles div.views-field-nothing a{
+    color: #ed3237;    
+    padding: 15px 35px 15px 35px;
+}
+
+.bloque-canastas-disponibles div.views-field-nothing:hover {
+    background: transparent;
+    border: solid 2px #ed3237;    
+    box-shadow: none;
+}
+
+.bloque-canastas-disponibles div.views-field-nothing a:hover{
+    color: #ed3237;    
+    padding: 15px 35px 15px 35px;
+    
+}
+
+#primary td {
+    padding: 15px 10px;
+    border-top: 1px solid #ddd;
+    border-right: 0px solid #ddd;
+    border-bottom: solid 1px #999999;
+}
+
+div#block-views-reservar-mi-canasta-block .view-content {
+    width: 100%;
+}
+
+#primary table {
+    margin: 0 auto;
+}
+
+.bloque-canastas-disponibles .views-field-title {
+    float: left;
+    margin-right: 20px;
+    padding-top: 11px;
+    padding-left: 13%;
+    text-align: center;
+}
+
+div#logo-front {
+    width: 56%;
+    max-width: 700px;
+    margin: 0 auto;
+    float: left;
+} 
+
+.logged-in div#logo-front {
+    float: none;
+}
+
+@media (min-width: 768px){
+    .col-sm-6 {width: 100%;}
+    
+}
+
+@media only screen and (max-width: 767px) {
+    div#block-user-login {width: 100%; float: none; }
+    div#logo-front { width: 100%;max-width: 700px;margin: 0 auto; float: none;}
+    .col-sm-13 img { max-height: 120px; width: 40%;}
+    .fcred {padding: 40px 0px; color: #bbb;}
+    span.os-ss-icon-more.osshare_more.more {display: none;}
+}
+
+/*NOTICIAS*/
+
+
+.views-field.views-field-body {
+    text-align: justify;
 }

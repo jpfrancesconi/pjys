@@ -1,0 +1,18 @@
+<?php
+
+// Funcion que se llama antes de mostrar el webform
+function nexus_form_user_login_block_alter(&$form, &$form_state, $form_id){
+	//drupal_set_message('<pre>'.print_r($form,true).'</pre>');
+ 	$form['actions']['submit']['#value'] = t('Ingresar');
+ 	$form['name']['#attributes'] = array('placeholder' => array(t('Usuario')));
+ 	$form['pass']['#attributes'] = array('placeholder' => array(t('Contraseña')));
+ 	$form['titulo'] = array(
+ 		'#markup' => '<div id="titulo-login-block"><strong>Inciá sesion</strong> para realizar tu pedido</div>', 		
+ 	);
+ 	$form['titulo'] ['#weight'] = 1;
+ 	$form['name']['#weight'] = 5;
+ 	$form['pass']['#weight'] = 10;
+ 	$form['actions']['#weight'] = 20;
+ 	$form['links']['#weight'] = 30;
+}
+?>

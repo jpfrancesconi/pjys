@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the WB_Canasta feature.
+ */
+
+include_once 'wb_canasta.features.inc';

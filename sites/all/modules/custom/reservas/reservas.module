@@ -1,140 +1,160 @@
 <?php
 
-// Funcion que se llama antes de mostrarel webform
+// Funcion que se llama antes de mostrar el webform
 function reservas_form_webform_client_form_alter(&$form, &$form_state, $form_id){
 	//Obtenemos el usuario que esta logueado y sus roles		
 	GLOBAL $user;
 	$usuarioConsulta = $user->uid; 
 	$rolesUsuario = $user->roles; 
 	$esAdministrador = false;
-	
+  $esParaEditar = false;
+  $formularioDeReserva = false;
+  $usuarioEnvioElFormulario = false;
+
 	// Cambiamos el mensaje del boton de submit segun sea el formulario que llame
 	if($form_id == "webform_client_form_4"){
 		$form['actions']['submit']['#value'] = "ENVIAR";
 	}
-	if($form_id == "webform_client_form_3"){
+	if($form_id == "webform_client_form_12"){
 		if(in_array('anonymous user', $rolesUsuario)){ //preguntamos si es anonimo
 			drupal_goto('/user/login',array('query'=>array('destination'=>$_GET['q'].'?canasta='.$_GET['canasta'])));
 		}
+    // indicamos si es o no el formulario para reserva de canastas
+    $formularioDeReserva = true;
 	}
 
-	if(in_array('administrador', $rolesUsuario)){ //preguntamos si es administrador
-		$esAdministrador = true;
-	} else {
-		$esAdministrador = false;
-	}
-	
-	$esParaEditar = false;
-	//if ($form['#action'] contains "edit?")
+  // Verificamos los roles del usuario que ingresa al formulario
+  if(in_array('administrador', $rolesUsuario) | in_array('administrator', $rolesUsuario)){ //preguntamos si es administrador
+    $esAdministrador = true; //1= Administrador
+  } else {
+    $esAdministrador = false; //0= Usuario Comun
+  }
 
-	if (strpos($form['#action'], '/edit') !== false) 
-    	$esParaEditar = true;
+  // Verificamos si se abre el formulario para ediciòn o no
+  if (strpos($form['#action'], '/edit') !== false) 
+      $esParaEditar = true;
 
-	//Pregunto si es el formulario de Canasta Solidaria
-	if($form_id == "webform_client_form_3" & !$esParaEditar){  		
-		//recupero el id de la canasta seleccionada, el nid.
-		$idCanasta = $form['submitted']['datos_de_la_reserva']['id_canasta']['#default_value'];
+  //Pregunto si es el formulario de Canasta Solidaria
+  if($formularioDeReserva){  
+    // RECUPERO DE DATOS COMUNES A CUALQUIERA DE LOS FLUJOS POSIBLES *************
+    //recupero el id de la canasta seleccionada, el nid.
+    $idCanasta = $form['submitted']['datos_de_la_reserva']['id_canasta']['#default_value'];
+    //Cargamos el nodo CANASTA SELECCIANDA
+    $canastaNodo = node_load($idCanasta);
+    //Seteamos los valores del form para reserva
+      $form['submitted']['datos_de_la_reserva']['canasta_a_reservar']['#default_value'] = $canastaNodo->title;
+      $form['submitted']['datos_de_la_reserva']['precio_unitario']['#default_value'] = $canastaNodo->field_precio['und'][0]['value'];
+      $form['submitted']['datos_de_la_reserva']['fecha_para_retirar_la_compra']['#default_value'] = $canastaNodo->field_fecha_de_entrega['und'][0]['value'];
 
-		//verificamos si el usuario ya envio este formulario para reserva o espera o cancelacion
-		$usuarioEnvioElFormulario = webform_get_submission_count_by_canasta_id(3, $usuarioConsulta, $idCanasta);
 
-		//Cargamos el nodo CANASTA SELECCIANDA
-		$canastaNodo = node_load($idCanasta);
+    // EMPIEZAN LOS FLUJOS POSIBLES **********************************************
+    // %1- Si es Administrador puede enviar mas de una vez el formulario de reserva
+	   if($esAdministrador){
+      
+      // Verificamos si se acceder a editar un formulario ya enviado
+      if(!$esParaEditar){ // %11- No Edicion
+        
+        drupal_set_message("Acceso no edicion de Usuario ADMIN", "status"); //ZZBORRAR
 
-		if($usuarioEnvioElFormulario != 0 && !$esAdministrador){  //Los administradores pueden hacer mas se un envio
-      		// Ya tiene un envio hecho de este formulario: 
-      		drupal_set_message("Usted ya ha enviado esta Solicitud, verifique en su eMail", "status");
-      		drupal_goto('mis_reservas/3/'.$usuarioConsulta, array('nid'=>$canastaNodo->nid));
 
-      		//Seteamos los valores del form para reserva
-			$form['submitted']['datos_de_la_reserva']['canasta_a_reservar']['#default_value'] = $canastaNodo->title;
-			$form['submitted']['datos_de_la_reserva']['precio_unitario']['#default_value'] = $canastaNodo->field_precio['und'][0]['value'];
-			$form['submitted']['datos_de_la_reserva']['fecha_para_retirar_la_compra']['#default_value'] = $canastaNodo->field_fecha_de_entrega['und'][0]['value'];
+      } else { // %12- Edicion
+        
 
-      		//$form['submitted']['datos_de_la_reserva']['estado']['#default_value'] = "RESERVA CANCELADA";
+      } // FIN if($esParaEditar)
+    // %2- Si es un usuario registrado comun solo puede enviar una vez el formulario
+    } else {
 
-      		//Cambiamos el titulo del boton a LISTA DE ESPERA
-	      	$form['actions']['submit']['#value'] = "Cancelar Reserva";
-	      	//Ocultamos el botòn de Confirmar
-	      	$form['actions']['submit']['#prefix'] = "<div style='display: none;'>";
-	      	$form['actions']['submit']['#suffix'] = "</div>";
-			//Agregamos el manejador de validaciones para el caso de que haya disponibles
-	      	$form['#validate'][] = 'reservas_reservar_validate';	      	
+      // Verificamos si se acceder a editar un formulario ya enviado
+      if(!$esParaEditar){ // %21- No Edicion
+        
+        drupal_set_message("Acceso no edicion de Usuario COMUN", "status"); //ZZBORRAR
+        //verificamos si el usuario ya envio este formulario para reserva o espera o cancelacion
+        $usuarioEnvioElFormulario = webform_get_submission_count_by_canasta_id(12, $usuarioConsulta, $idCanasta);
+        // Verificamos si el usuario comun envio ya el formulario para la canasta seleccionada
+        if($usuarioEnvioElFormulario){ // %211
 
-    	} else {  
-    		// Nunca enviò el formulario: verificar si hay cupos disponibles o si se le ofrece lista de espera
-      		//drupal_set_message("Usted podria reservar esta canasta", "status");
+          drupal_set_message("Ya ha enviado una solicitud para la canasta seleccionada", "status");
+          //Redirigimos al usuario a ver los detalles
+          //drupal_goto('mis_reservas/12/'.$usuarioConsulta, array('nid'=>$canastaNodo->nid));
+          //Desaparecemos el boton de cancelar reserva pues ya esta cancelada
+          $form['actions']['submit']['#prefix'] = "<div style='display: none;'>";
+          $form['actions']['submit']['#suffix'] = "</div>";
+        } else { // %212
 
-      		//contamos la cantidad de reservas que tiene esta canasta
-			$cantidadTotalReservada = webform_get_submission_count_x_cantsel_by_canasta_id(3, NULL, $idCanasta);
-			
-			//Comparamos la cantidad total disponible con la cantidad total ofrecida
-			if($canastaNodo->field_cantidad_total_disponible['und'][0]['value'] > $cantidadTotalReservada){  
-				
-	      		// Hay cupos disponibles
-	      		//Seteamos los valores del form para reserva
-				$form['submitted']['datos_de_la_reserva']['canasta_a_reservar']['#default_value'] = $canastaNodo->title;
-				$form['submitted']['datos_de_la_reserva']['precio_unitario']['#default_value'] = $canastaNodo->field_precio['und'][0]['value'];
-				$form['submitted']['datos_de_la_reserva']['fecha_para_retirar_la_compra']['#default_value'] = $canastaNodo->field_fecha_de_entrega['und'][0]['value'];
+          drupal_set_message("No envio la canasta aun", "status"); //ZZBORRAR
+          //contamos la cantidad de reservas que tiene esta canasta
+          $cantidadTotalReservada = webform_get_submission_count_x_cantsel_by_canasta_id(12, NULL, $idCanasta);
 
-				//Cambiamos el titulo del boton a CONFIcp-RMAR RESERVA
-	      		$form['actions']['submit']['#value'] = "Confirmar Reserva";
+          //Comparamos la cantidad total disponible con la cantidad total ofrecida
+          if($canastaNodo->field_cantidad_total_disponible['und'][0]['value'] > $cantidadTotalReservada){  
+        
+            // Hay cupos disponibles
+            //Seteamos los valores del form para reserva
+            $form['submitted']['datos_de_la_reserva']['canasta_a_reservar']['#default_value'] = $canastaNodo->title;
+            $form['submitted']['datos_de_la_reserva']['precio_unitario']['#default_value'] = $canastaNodo->field_precio['und'][0]['value'];
+            $form['submitted']['datos_de_la_reserva']['fecha_para_retirar_la_compra']['#default_value'] = $canastaNodo->field_fecha_de_entrega['und'][0]['value'];
 
-	      		//Agregamos el manejador de validaciones para el caso de que haya disponibles
-	      		$form['#validate'][] = 'reservas_reservar_validate';
-	      		
-	    	} else {  
-	      		// NO Hay cupos disponibles
-	      		drupal_set_message("YA NO QUEDAN CANASTAS DISPONIBLES, DESEA INGRESAR A LA LISTA DE ESPERA? LE INFORMAREMOS CUANDO HAYA ALGUNA DISPONIBLE", "warning");
+            //Cambiamos el titulo del boton a CONFIcp-RMAR RESERVA
+                $form['actions']['submit']['#value'] = "Confirmar Reserva";
 
-	      		//Seteamos los valores del form para reserva
+                //Agregamos el manejador de validaciones para el caso de que haya disponibles
+                $form['#validate'][] = 'reservas_reservar_validate';
+                
+            } else {  
+                // NO Hay cupos disponibles
+                drupal_set_message("YA NO QUEDAN CANASTAS DISPONIBLES, DESEA INGRESAR A LA LISTA DE ESPERA? LE INFORMAREMOS CUANDO HAYA ALGUNA DISPONIBLE", "warning");
 
-	      		$form['submitted']['datos_de_la_reserva']['#prefix'] = "<div style='display: none;'>";
-	      		$form['submitted']['datos_de_la_reserva']['#suffix'] = "</div>";
-				$form['submitted']['datos_de_la_reserva']['canasta_a_reservar']['#default_value'] = $canastaNodo->title;
-				$form['submitted']['datos_de_la_reserva']['total_a_pagar']['#default_value'] = $canastaNodo->field_precio['und'][0]['value'];
-				$form['submitted']['datos_de_la_reserva']['fecha_para_retirar_la_compra']['#default_value'] = $canastaNodo->field_fecha_de_entrega['und'][0]['value'];
+                //Seteamos los valores del form para reserva
 
-				$form['submitted']['datos_de_la_reserva']['estado']['#default_value'] = "LISTA DE ESPERA";
+                $form['submitted']['datos_de_la_reserva']['#prefix'] = "<div style='display: none;'>";
+                $form['submitted']['datos_de_la_reserva']['#suffix'] = "</div>";
+                $form['submitted']['datos_de_la_reserva']['canasta_a_reservar']['#default_value'] = $canastaNodo->title;
+                $form['submitted']['datos_de_la_reserva']['total_a_pagar']['#default_value'] = $canastaNodo->field_precio['und'][0]['value'];
+                $form['submitted']['datos_de_la_reserva']['fecha_para_retirar_la_compra']['#default_value'] = $canastaNodo->field_fecha_de_entrega['und'][0]['value'];
 
-	      		//Cambiamos el titulo del boton a LISTA DE ESPERA
-	      		$form['actions']['submit']['#value'] = "Confirmar Ingreso a Lista de Espera";
-	    	} 
-    	} 
-    } else if($form_id == "webform_client_form_3" & $esParaEditar){  
-    	//dpm($form);
-    	if(!$esAdministrador){  
-    		//dpm($form);
-    		if($form['submitted']['datos_de_la_reserva']['estado']['#default_value'] == 2 || $form['submitted']['datos_de_la_reserva']['estado']['#default_value'] == "RESERVA CANCELADA"){
-    			dpm("CANCELADO");
-				//Desaparecemos el boton de cancelar reserva pues ya esta cancelada
-    			$form['actions']['submit']['#prefix'] = "<div style='display: none;'>";
-    			$form['actions']['submit']['#suffix'] = "</div>";
+                $form['submitted']['datos_de_la_reserva']['estado']['#default_value'] = "LISTA DE ESPERA";
 
-    			$form['submitted']['datos_de_la_reserva']['mensaje_cancelado'] = array('#markup' => '<p style="text-align: center;"><span class="alertablink">ESTA RESERVA FUE CANCELADA POR EL USUARIO<span></p>');
-    		}
+                //Cambiamos el titulo del boton a LISTA DE ESPERA
+                $form['actions']['submit']['#value'] = "Confirmar Ingreso a Lista de Espera";
+            } 
+        }
 
-    		//ponemos como no editable al select de cantidad de canasta a elegir
-    		$form['submitted']['datos_de_la_reserva']['cantidad_a_reservar']['#disabled'] = true;
+      } else { // %22- Edicion
+        
+        drupal_set_message("Canasta abierta para editar", "status");
+        if($form['submitted']['datos_de_la_reserva']['estado']['#default_value'] == 2 || $form['submitted']['datos_de_la_reserva']['estado']['#default_value'] == "RESERVA CANCELADA"){
+          dpm("CANCELADO");
+          //Desaparecemos el boton de cancelar reserva pues ya esta cancelada
+          $form['actions']['submit']['#prefix'] = "<div style='display: none;'>";
+          $form['actions']['submit']['#suffix'] = "</div>";
 
-	    	$form['submitted']['tus_datos']['#prefix'] = "<div style='display: none;'>";
-		      		$form['submitted']['tus_datos']['#suffix'] = "</div>";
-		    
-			$form['submitted']['datos_de_la_reserva']['estado']['#default_value'] = "RESERVA CANCELADA";
+          $form['submitted']['datos_de_la_reserva']['mensaje_cancelado'] = array('#markup' => '<p style="text-align: center;"><span class="alertablink">ESTA RESERVA FUE CANCELADA POR EL USUARIO<span></p>');
+        }
 
-				//Cambiamos el titulo del boton a CANCELAR RESERVA
-	      $form['actions']['submit']['#value'] = "Cancelar Reserva";
-	      //$form['actions']['submit']['#attributes']['onClick'] = 'if(confirm("¿Está seguro que desea cancelar su reserva? Esta accion es de caracter irreversible.")){ return true; return false; }';
+        //ponemos como no editable al select de cantidad de canasta a elegir
+        $form['submitted']['datos_de_la_reserva']['cantidad_a_reservar']['#disabled'] = true;
 
-	    	$form['actions']['custom_submit']  = array(
+        $form['submitted']['tus_datos']['#prefix'] = "<div style='display: none;'>";
+              $form['submitted']['tus_datos']['#suffix'] = "</div>";
+        
+        $form['submitted']['datos_de_la_reserva']['estado']['#default_value'] = "RESERVA CANCELADA";
 
-		        '#type' => 'submit',
-		        '#value' => t('Volver'),
-		        '#submit' => array('reservas_cancelar_volver_submit'),
-	      	);
-	      	$form['#validate'][] = 'reservas_cancelar_validate';
-    	}
-    }
+        //Cambiamos el titulo del boton a CANCELAR RESERVA
+        $form['actions']['submit']['#value'] = "Cancelar Reserva";
+        //$form['actions']['submit']['#attributes']['onClick'] = 'if(confirm("¿Está seguro que desea cancelar su reserva? Esta accion es de caracter irreversible.")){ return true; return false; }';
+
+        $form['actions']['custom_submit']  = array(
+
+            '#type' => 'submit',
+            '#value' => t('Volver'),
+            '#submit' => array('reservas_cancelar_volver_submit'),
+          );
+        $form['#validate'][] = 'reservas_cancelar_validate';
+      } // FIN if($esParaEditar)
+
+    } // FIN del if($esAdministrador)
+  } // FIN del if($formularioDeReserva)
+
 }
 
 
@@ -145,9 +165,9 @@ function reservas_reservar_validate(&$form, &$form_state) {
 
   	//Cargamos el nodo CANASTA SELECCIANDA
 	$canastaNodoValidar = node_load($idCanastaValidar);
-
+dpm($form);
 	//contamos la cantidad de reservas que tiene esta canasta
-	$cantidadTotalReservadaValidar = webform_get_submission_count_x_cantsel_by_canasta_id(3, NULL, $idCanastaValidar);
+	$cantidadTotalReservadaValidar = webform_get_submission_count_x_cantsel_by_canasta_id(12, NULL, $idCanastaValidar);
 	dpm($cantidadTotalReservadaValidar);
 	//Cantidad seleccionada por el usuario
 	$cantidadElegidaValidar = $form['submitted']['datos_de_la_reserva']['cantidad_a_reservar']['#value'];
@@ -172,7 +192,8 @@ function reservas_cancelar_volver_submit($form, &$form_state) {
 	$uid = $form_state['values']['details']['uid'];
 	
 	//redireccionamos a mis_reservas 
-	$form_state['redirect'] = array('mis_reservas/'.$nid.'/'.$uid);
+	//$form_state['redirect'] = array('mis_reservas/'.$nid.'/'.$uid);
+  $form_state['redirect'] = array('mis-reservas');
 	
 
   //$form['#node']->webform['components']['9']['value'] = "RESERVA CANCELADA";
