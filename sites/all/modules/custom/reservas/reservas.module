@@ -55,16 +55,51 @@ function reservas_form_webform_client_form_alter(&$form, &$form_state, $form_id)
       if(!$esParaEditar){ // %11- No Edicion
         
         drupal_set_message("Acceso no edicion de Usuario ADMIN", "status"); //ZZBORRAR
+        //contamos la cantidad de reservas que tiene esta canasta
+        $cantidadTotalReservada = webform_get_submission_count_x_cantsel_by_canasta_id(12, NULL, $idCanasta);
 
+        //Comparamos la cantidad total disponible con la cantidad total ofrecida
+        if($canastaNodo->field_cantidad_total_disponible['und'][0]['value'] > $cantidadTotalReservada){  
+      
+          // Hay cupos disponibles
+          //Seteamos los valores del form para reserva
+          $form['submitted']['datos_de_la_reserva']['canasta_a_reservar']['#default_value'] = $canastaNodo->title;
+          $form['submitted']['datos_de_la_reserva']['precio_unitario']['#default_value'] = $canastaNodo->field_precio['und'][0]['value'];
+          $form['submitted']['datos_de_la_reserva']['fecha_para_retirar_la_compra']['#default_value'] = $canastaNodo->field_fecha_de_entrega['und'][0]['value'];
+
+          //Cambiamos el titulo del boton a CONFIcp-RMAR RESERVA
+              $form['actions']['submit']['#value'] = "Confirmar Reserva";
+
+              //Agregamos el manejador de validaciones para el caso de que haya disponibles
+              $form['#validate'][] = 'reservas_reservar_validate';
+              
+          } else {  
+              // NO Hay cupos disponibles
+              drupal_set_message("YA NO QUEDAN CANASTAS DISPONIBLES, DESEA INGRESAR A LA LISTA DE ESPERA? LE INFORMAREMOS CUANDO HAYA ALGUNA DISPONIBLE", "warning");
+
+              //Seteamos los valores del form para reserva
+
+              $form['submitted']['datos_de_la_reserva']['#prefix'] = "<div style='display: none;'>";
+              $form['submitted']['datos_de_la_reserva']['#suffix'] = "</div>";
+              $form['submitted']['datos_de_la_reserva']['canasta_a_reservar']['#default_value'] = $canastaNodo->title;
+              $form['submitted']['datos_de_la_reserva']['total_a_pagar']['#default_value'] = $canastaNodo->field_precio['und'][0]['value'];
+              $form['submitted']['datos_de_la_reserva']['fecha_para_retirar_la_compra']['#default_value'] = $canastaNodo->field_fecha_de_entrega['und'][0]['value'];
+
+              $form['submitted']['datos_de_la_reserva']['estado']['#default_value'] = "LISTA DE ESPERA";
+
+              //Cambiamos el titulo del boton a LISTA DE ESPERA
+              $form['actions']['submit']['#value'] = "Confirmar Ingreso a Lista de Espera";
+          }
 
       } else { // %12- Edicion
         
+        drupal_set_message("Acceso edicion de Usuario ADMIN", "status"); //ZZBORRAR
 
       } // FIN if($esParaEditar)
     // %2- Si es un usuario registrado comun solo puede enviar una vez el formulario
     } else {
 
-      // Verificamos si se acceder a editar un formulario ya enviado
+      // Verificamos si se acceder a editar o no un formulario ya enviado
       if(!$esParaEditar){ // %21- No Edicion
         
         drupal_set_message("Acceso no edicion de Usuario COMUN", "status"); //ZZBORRAR
@@ -325,6 +360,7 @@ function reservas_preprocess_block(&$variables){
 /* Funcion que se llama cuando se carga el Front Page la misma
 valida que el usuario loguado haya reservado la canasto o no */
 function reservas_views_pre_render(&$view) {
+  //drupal_set_message("reservas_views_pre_render", 'status');
 	GLOBAL $user;
 	$usuarioConsulta = $user->uid;
 	//drupal_set_message("uid: ". $usuarioConsulta, 'status');
@@ -332,7 +368,7 @@ function reservas_views_pre_render(&$view) {
   		if ($view->name == 'reservar_mi_canasta' && $view->current_display == 'block') {
   		$idCanasta = $view->result[0]->nid;
   			//Pregunto si el ususaario ya tiene una reserva para esta canasta
-  			$usuarioEnvioElFormulario = webform_get_submission_count_by_canasta_id(3, $usuarioConsulta, $idCanasta);
+  			$usuarioEnvioElFormulario = webform_get_submission_count_by_canasta_id(12, $usuarioConsulta, $idCanasta);
 		  	if($usuarioEnvioElFormulario){
 		  		$view->result[0]->node_title = $view->result[0]->node_title." (Ya la reservaste)";
 		  	} 
