@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<options>
+	<option> 
+		<value>NO</value>
+		<label>NO</label>
+	</option>
+	<option> 
+		<value>SI</value>
+		<label>SI</label>
+	</option>
+	<option> 
+		<value>TODOS</value>
+		<label>TODOS</label>
+	</option>
+</options>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY nbsp "&#160;">
+]>
+<html xmlns:frx="urn:FrxReports">
+<head>
+<title>Listar Reservas</title>
+<frx:category>Reservas</frx:category>
+<frx:options/>
+<frx:parameters>
+<frx:parm id="sino" label="Filtrar por Entregado:" require="1" data_source="dbConn/paramSINOTODOS" type="select">NO</frx:parm>
+<frx:parm id="apellido" label="Filtrar por Apellido y/o Nombre:" type="textfield"/>
+</frx:parameters>
+<frx:docgen>
+</frx:docgen>
+<frx:fields>
+</frx:fields>
+<frx:menu/>
+<frx:cache/>
+<style/>
+</head>
+<body>
+<div id="listarReservas_block" class="FrxTable" frx:block="dbConn/listarReservas">Listado de Reservas realizadas por Canasta
+    <table>
+      <thead>
+        <tr>
+          <th>CODIGO CANASTA</th>
+          <th>CANASTA</th>
+          <th>CANTIDAD</th>
+          <th>MONTO A PAGAR</th>
+          <th>ESTADO</th>
+          <th>USUARIO</th>
+          <th>NOMBRE</th>
+          <th>DNI</th>
+          <th>ENTREGADO?</th>
+          <th>OPERACIONES</th></tr></thead>
+      <tbody>
+        <tr id="listarReservas" frx:foreach="*">
+          <td>{CODIGO_CANASTA}</td>
+          <td>{CANASTA}</td>
+          <td>{CANTIDAD}</td>
+          <td>{MONTO_A_PAGAR}</td>
+          <td>{ESTADO}</td>
+          <td>{USUARIO}</td>
+          <td>{NOMBRE}</td>
+          <td>{DNI}</td>
+          <td>{ENTREGADO}</td>
+          <td><a href="../node/12/submission/{SID}/edit">EDITAR</a></td></tr></tbody></table></div></body>
+</html>
